@@ -1,0 +1,128 @@
+#!/usr/bin/python3
+
+import sys
+import os
+import subprocess
+
+def usage():
+    print()
+    print('Utilize \033[33mcalc [expressão]\033[m')
+    print('Manual: ')
+    print('  [+] - Adição')
+    print('  [-] - Subtração')
+    print('  [*] - Multiplicação')
+    print('  [\] - Divisão')
+    print('  [^] - Exponenciação')
+    print(' Ordem: ')
+    print('   ..Mesma ordem da matemática (PEMDAS)')
+    print('   1 - Parênteses (())')
+    print('   2 - Exponenciação (^)')
+    print('   3 - Multiplicação (*) e dividão (/)')
+    print('   4 - Soma (+) e subtração (-)')
+    print(' OBS: Ao fazer operações com parêntes, coloque a expressão entre aspas para não ocorrer erros.')
+    print(' Exemplos:')
+    print('   calc 6-4')
+    print('   calc 2*1+10')
+    print('   calc \'13*(2^2)\'')
+    print()
+    sys.exit(1)
+
+
+def calcular(n1,n2,operacao):
+    resultado=0
+    if operacao=='+':
+        resultado= float(n1)+float(n2)
+    elif operacao=='-':
+        resultado= float(n1)-float(n2)
+    elif operacao=='*':
+        resultaddo=float(n1)*float(n2)
+    elif operacao=='/':
+        resultado=float(n1)/float(n2)
+    elif operacao=='^':
+        resultado= float(n1)**float(n2)
+    return str(resultado)    
+
+
+
+def resolver(expl):
+    cont=0
+    for cada in expl:
+        if cada=='^':
+            expl.insert(cont-1,calcular(expl[cont-1],expl[cont+1],'^'))
+            for i in range(0,3):
+                del(expl[cont])
+        cont+=1
+
+    cont=0
+    for cada in expl:
+        if cada in '*/':
+            expl.insert(cont-1,calcular(expl[cont-1],expl[cont+1],cada))
+            for i in range(0,3):
+                del(expl[cont])
+        cont+=1
+
+    cont=0
+    for cada in expl:
+        if cada in '+-':
+            expl.insert(cont-1,calcular(expl[cont-1],expl[cont+1],cada))
+            for i in range(0,3):
+                del(expl[cont])
+        cont+=1
+    return expl[0] if len(expl)==1 else expl
+
+
+
+if len(sys.argv)>2 or len(sys.argv)==1:
+    usage()
+exp=sys.argv[1]
+expl=[]
+foinumber=False
+cont=-1
+erro=False
+for cada in exp:
+    if cada in '0123456789':
+        if foinumber:
+            expl[cont]+=cada
+        else:
+            expl.append(cada)
+            cont+=1
+        foinumber=True
+    elif cada in '/+-*^()':
+        foinumber=False
+        cont+=1
+        expl.append(cada)
+    else:
+        erro=True
+num=0
+carac=0
+abriu=0
+fechou=0
+for cada in expl:
+    if cada.isnumeric():
+        num+=1
+    elif cada in '+-*/^':
+        carac+=1
+    if cada=='(':
+        abriu+=1
+    elif cada==')':
+        fechou+=1
+if fechou!=abriu or carac!=num-1 or erro:
+    print('Erro. Operação inválida')
+    sys.exit(1)
+
+
+
+
+cont=0
+cont2=0
+for cada in expl:
+    if cada=='(':
+        for cadinha in expl:
+            if cadinha==')':
+                x=resolver(expl[cont+1:cont2])
+                expl.insert(cont,x)
+                del(expl[cont+1:cont2+2])
+            cont2+=1
+    cont+=1
+expl=resolver(expl)
+print(expl)
