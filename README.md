@@ -4,7 +4,8 @@ No terminal digite 'echo $PATH' e copie o arquivo 'calc' para um desses diretór
 Para abrir o manual digite 'calc --help'
 
 Utilize calc [expressão]
-  [+] - Adição
+
+[+] - Adição
   [-] - Subtração
   [*] - Multiplicação
   [\] - Divisão
