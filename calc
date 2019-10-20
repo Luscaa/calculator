@@ -5,9 +5,7 @@ import os
 import subprocess
 
 def usage():
-    print()
     print('Utilize \033[33mcalc [expressão]\033[m')
-    print('Manual: ')
     print('  [+] - Adição')
     print('  [-] - Subtração')
     print('  [*] - Multiplicação')
@@ -24,6 +22,11 @@ def usage():
     print('   calc 6-4')
     print('   calc 2*1+10')
     print('   calc \'13*(2^2)\'')
+    print(' Personalizado:')
+    print('   [--help] - Abre este guia')
+    print('   [-p] - Teorema de pitágoras')
+    print('      calc -p [cateto1] [cateto2]')
+    print('Mais informações: https://github.com/Luscaa/calculator')
     print()
     sys.exit(1)
 
@@ -35,7 +38,7 @@ def calcular(n1,n2,operacao):
     elif operacao=='-':
         resultado= float(n1)-float(n2)
     elif operacao=='*':
-        resultaddo=float(n1)*float(n2)
+        resultado=float(n1)*float(n2)
     elif operacao=='/':
         resultado=float(n1)/float(n2)
     elif operacao=='^':
@@ -70,12 +73,21 @@ def resolver(expl):
         cont+=1
     return expl[0] if len(expl)==1 else expl
 
+def pitagoras(n1,n2):
+    return ((n1**2)+(n2**2))**(1/2)
 
-
-if len(sys.argv)>2 or len(sys.argv)==1:
-    usage()
+if (len(sys.argv)>2 and sys.argv[1][0]!='-')or len(sys.argv)==1:
+    print('\033[31m[Erro] digite \033[33mcalc --help\033[m')
+    sys.exit(1)
 exp=sys.argv[1]
-expl=[]
+if exp[0]=='-':
+    if exp=='--help':
+        usage()
+    if exp=='-p':
+        print('{}'.format(pitagoras(int(sys.argv[2]),int(sys.argv[3]))))
+        sys.exit(1)
+                
+expl=list()
 foinumber=False
 cont=-1
 erro=False
@@ -107,7 +119,7 @@ for cada in expl:
     elif cada==')':
         fechou+=1
 if fechou!=abriu or carac!=num-1 or erro:
-    print('Erro. Operação inválida')
+    print('\033[31m[Erro] Digite \033[33mcalc --help\033[m')
     sys.exit(1)
 
 
